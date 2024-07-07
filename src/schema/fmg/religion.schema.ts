@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const zDefaultReligion = z.object({
-  afpVariant: z.literal("DEFAULT"),
   i: z.number(),
   name: z.string(),
   origins: z.null(),
@@ -9,7 +8,6 @@ export const zDefaultReligion = z.object({
 
 export const zDefinedReligion = zDefaultReligion.merge(
   z.object({
-    afpVariant: z.literal("DEFINED"),
     code: z.string(),
     type: z.string(),
     form: z.string(),
@@ -23,11 +21,12 @@ export const zDefinedReligion = zDefaultReligion.merge(
   }),
 );
 
-export const zReligion = z.discriminatedUnion("afpVariant", [
-  zDefaultReligion,
-  zDefinedReligion,
-]);
+export const zReligion = z.union([zDefaultReligion, zDefinedReligion]);
 
 export type TReligion = z.infer<typeof zReligion>;
 export type TDefinedReligion = z.infer<typeof zDefinedReligion>;
 export type TDefaultReligion = z.infer<typeof zDefaultReligion>;
+
+export const isDefaultReligion = (
+  religion: TReligion,
+): religion is TDefaultReligion => religion.i === 0;

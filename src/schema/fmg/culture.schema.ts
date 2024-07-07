@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const zDefaultCulture = z.object({
-  afpVariant: z.literal("DEFAULT"),
   i: z.number(),
   name: z.string(),
   base: z.number(),
@@ -11,7 +10,6 @@ export const zDefaultCulture = z.object({
 
 export const zDefinedCulture = zDefaultCulture.merge(
   z.object({
-    afpVariant: z.literal("DEFINED"),
     code: z.string(),
     type: z.string(),
     color: z.string(),
@@ -21,11 +19,11 @@ export const zDefinedCulture = zDefaultCulture.merge(
   }),
 );
 
-export const zCulture = z.discriminatedUnion("afpVariant", [
-  zDefaultCulture,
-  zDefinedCulture,
-]);
+export const zCulture = z.union([zDefaultCulture, zDefinedCulture]);
 
 export type TCulture = z.infer<typeof zCulture>;
 export type TDefinedCulture = z.infer<typeof zDefinedCulture>;
 export type TDefaultCulture = z.infer<typeof zDefaultCulture>;
+
+export const isDefaultCulture = (culture: TCulture): culture is TCulture =>
+  culture.i === 0;

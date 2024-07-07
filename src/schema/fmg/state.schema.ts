@@ -2,7 +2,6 @@ import { z } from "zod";
 import { zCOA } from "../coa.schema";
 
 export const zDefaultState = z.object({
-  afpVariant: z.literal("DEFAULT"),
   i: z.number(),
   name: z.string(),
   area: z.number(),
@@ -17,7 +16,6 @@ export const zDefaultState = z.object({
 
 export const zDefinedState = zDefaultState.merge(
   z.object({
-    afpVariant: z.literal("DEFINED"),
     coa: zCOA,
     type: z.string(),
     form: z.string(),
@@ -43,11 +41,11 @@ export const zDefinedState = zDefaultState.merge(
   }),
 );
 
-export const zState = z.discriminatedUnion("afpVariant", [
-  zDefaultState,
-  zDefinedState,
-]);
+export const zState = z.union([zDefaultState, zDefinedState]);
 
 export type TState = z.infer<typeof zState>;
 export type TDefinedState = z.infer<typeof zDefinedState>;
 export type TDefaultState = z.infer<typeof zDefaultState>;
+
+export const isDefaultState = (state: TState): state is TDefaultState =>
+  state.i === 0;
