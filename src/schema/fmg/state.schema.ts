@@ -2,7 +2,7 @@ import { z } from "zod";
 import { zCOA } from "../coa.schema";
 
 export const zDefaultState = z.object({
-  i: z.number(),
+  i: z.literal(0),
   name: z.string(),
   area: z.number(),
   urban: z.number(),
@@ -16,12 +16,12 @@ export const zDefaultState = z.object({
 
 export const zDefinedState = zDefaultState.merge(
   z.object({
+    i: z.number(),
     coa: zCOA,
     type: z.string(),
     form: z.string(),
     color: z.string(),
     alert: z.number(),
-    state: z.number(),
     center: z.number(),
     culture: z.number(),
     capital: z.number(),

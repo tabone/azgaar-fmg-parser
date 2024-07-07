@@ -1,22 +1,23 @@
 import { z } from "zod";
 
 export const zDefaultReligion = z.object({
-  i: z.number(),
+  i: z.literal(0),
   name: z.string(),
   origins: z.null(),
 });
 
 export const zDefinedReligion = zDefaultReligion.merge(
   z.object({
+    i: z.number(),
     code: z.string(),
     type: z.string(),
     form: z.string(),
     color: z.string(),
-    deity: z.string(),
     center: z.number(),
     culture: z.number(),
     expansion: z.string(),
     expansionism: z.number(),
+    deity: z.string().nullable(),
     origins: z.array(z.number()),
   }),
 );

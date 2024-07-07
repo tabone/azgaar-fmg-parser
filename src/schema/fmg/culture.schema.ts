@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const zDefaultCulture = z.object({
-  i: z.number(),
+  i: z.literal(0),
   name: z.string(),
   base: z.number(),
   shield: z.string(),
@@ -10,6 +10,7 @@ export const zDefaultCulture = z.object({
 
 export const zDefinedCulture = zDefaultCulture.merge(
   z.object({
+    i: z.number(),
     code: z.string(),
     type: z.string(),
     color: z.string(),
