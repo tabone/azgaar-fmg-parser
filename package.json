@@ -1,0 +1,21 @@
+{
+  "name": "azgaar-fmg-parser",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
+  "author": "Luca Tabone<taboneluca3@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node index.ts",
+    "build": "tsc -p ."
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "prettier": "^3.3.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}
