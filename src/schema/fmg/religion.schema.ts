@@ -14,11 +14,11 @@ export const zDefinedReligion = zDefaultReligion.merge(
     type: z.string(),
     form: z.string(),
     color: z.string(),
+    deity: z.string(),
     center: z.number(),
     culture: z.number(),
     expansion: z.string(),
     expansionism: z.number(),
-    deity: z.string().nullable(),
     origins: z.array(z.number()),
   }),
 );
