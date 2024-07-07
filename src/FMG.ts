@@ -24,6 +24,7 @@ const zFMGProps = z.object({
 const zFMGParseProps = z.object({
   data: z.string(),
   debug: z.boolean().default(false).optional(),
+  strictMode: z.boolean().default(false).optional(),
 });
 
 export type TFMGProps = z.infer<typeof zFMGProps>;
@@ -68,13 +69,14 @@ export class FMG {
   }
 
   static parse(props: TFMGParseProps) {
-    const { data, debug } = zFMGParseProps.parse(props);
+    const { data, debug, strictMode } = zFMGParseProps.parse(props);
 
     const payload = data.split("\n");
 
     return new FMG({
       burgs: parseFMGRecords({
         debug,
+        strictMode,
         model: "BURG",
         zSchema: zBurg,
         data: JSON.parse(payload[150]).slice(1),
@@ -82,6 +84,7 @@ export class FMG {
 
       states: parseFMGRecords({
         debug,
+        strictMode,
         model: "STATE",
         zSchema: zState,
         data: JSON.parse(payload[149]),
@@ -89,6 +92,7 @@ export class FMG {
 
       cultures: parseFMGRecords({
         debug,
+        strictMode,
         model: "CULTURE",
         zSchema: zCulture,
         data: JSON.parse(payload[148]),
@@ -96,6 +100,7 @@ export class FMG {
 
       religions: parseFMGRecords({
         debug,
+        strictMode,
         model: "RELIGION",
         zSchema: zReligion,
         data: JSON.parse(payload[164]),
@@ -103,6 +108,7 @@ export class FMG {
 
       provinces: parseFMGRecords({
         debug,
+        strictMode,
         model: "PROVINCE",
         zSchema: zProvince,
         data: JSON.parse(payload[165]).slice(1),
