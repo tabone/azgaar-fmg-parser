@@ -48,23 +48,23 @@ export class FMG {
   }
 
   get burgs() {
-    return JSON.parse(JSON.stringify(this._burgs));
+    return this._burgs;
   }
 
   get states() {
-    return JSON.parse(JSON.stringify(this._states));
+    return this._states;
   }
 
   get cultures() {
-    return JSON.parse(JSON.stringify(this._cultures));
+    return this._cultures;
   }
 
   get religions() {
-    return JSON.parse(JSON.stringify(this._religions));
+    return this._religions;
   }
 
   get provinces() {
-    return JSON.parse(JSON.stringify(this._provinces));
+    return this._provinces;
   }
 
   static parse(props: TFMGParseProps) {
@@ -82,7 +82,7 @@ export class FMG {
 
       states: parseFMGRecords({
         debug,
-        model: "CULTURE",
+        model: "STATE",
         zSchema: zState,
         data: JSON.parse(payload[149]),
       }),
