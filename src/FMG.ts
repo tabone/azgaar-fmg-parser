@@ -12,7 +12,7 @@ import {
   zReligion,
   zState,
 } from "./schema";
-import { indexFMGRecords, parseFMGRecords } from "./utils";
+import { parseJSON, indexFMGRecords, parseFMGRecords } from "./utils";
 
 const zFMGProps = z.object({
   burgs: z.array(zBurg),
@@ -24,8 +24,6 @@ const zFMGProps = z.object({
 
 const zFMGParseProps = z.object({
   data: z.string(),
-  debug: z.boolean().default(false).optional(),
-  strictMode: z.boolean().default(false).optional(),
 });
 
 export type TFMGProps = z.infer<typeof zFMGProps>;
@@ -70,51 +68,99 @@ export class FMG {
   }
 
   static parse(props: TFMGParseProps) {
-    const { data, debug, strictMode } = zFMGParseProps.parse(props);
+    const { data } = zFMGParseProps.parse(props);
 
     const payload = data.split("\n");
 
-    return new FMG({
-      burgs: parseFMGRecords({
-        debug,
-        strictMode,
-        model: "BURG",
+    const statesJSON = parseJSON(payload[149], "states");
+    const culturesJSON = parseJSON(payload[148], "cultures");
+    const religionsJSON = parseJSON(payload[164], "religions");
+    const burgsJSON = parseJSON(payload[150], "burgs").slice(1);
+    const provincesJSON = parseJSON(payload[165], "Provinices").slice(1);
+
+    const { records: burgRecords, unparsable: unparsableBurgs } =
+      parseFMGRecords({
         zSchema: zBurg,
-        data: JSON.parse(payload[150]).slice(1),
-      }),
+        data: burgsJSON,
+      });
 
-      states: parseFMGRecords({
-        debug,
-        strictMode,
-        model: "STATE",
+    const { records: stateRecords, unparsable: unparsableStates } =
+      parseFMGRecords({
         zSchema: zState,
-        data: JSON.parse(payload[149]),
-      }),
+        data: statesJSON,
+      });
 
-      cultures: parseFMGRecords({
-        debug,
-        strictMode,
-        model: "CULTURE",
+    const { records: cultureRecords, unparsable: unparsableCultures } =
+      parseFMGRecords({
         zSchema: zCulture,
-        data: JSON.parse(payload[148]),
-      }),
+        data: culturesJSON,
+      });
 
-      religions: parseFMGRecords({
-        debug,
-        strictMode,
-        model: "RELIGION",
+    const { records: religionRecords, unparsable: unparsableReligions } =
+      parseFMGRecords({
         zSchema: zReligion,
-        data: JSON.parse(payload[164]),
-      }),
+        data: religionsJSON,
+      });
 
-      provinces: parseFMGRecords({
-        debug,
-        strictMode,
-        model: "PROVINCE",
+    const { records: provinceRecords, unparsable: unparsableProvinces } =
+      parseFMGRecords({
         zSchema: zProvince,
+        data: provincesJSON,
         zParsableSchema: zParsableProvince,
-        data: JSON.parse(payload[165]).slice(1),
-      }),
+      });
+
+    const fmg = new FMG({
+      burgs: burgRecords,
+      states: stateRecords,
+      cultures: cultureRecords,
+      religions: religionRecords,
+      provinces: provinceRecords,
     });
+
+    return {
+      fmg,
+      info: [
+        {
+          name: "burgs",
+          json: burgsJSON,
+          unparsable: unparsableBurgs,
+          stored: Object.values(fmg.burgs).length,
+        },
+        {
+          name: "states",
+          json: statesJSON,
+          unparsable: unparsableStates,
+          stored: Object.values(fmg.states).length,
+        },
+        {
+          name: "cultures",
+          json: culturesJSON,
+          unparsable: unparsableCultures,
+          stored: Object.values(fmg.cultures).length,
+        },
+        {
+          name: "religions",
+          json: religionsJSON,
+          unparsable: unparsableReligions,
+          stored: Object.values(fmg.religions).length,
+        },
+        {
+          name: "provinces",
+          json: provincesJSON,
+          unparsable: unparsableProvinces,
+          stored: Object.values(fmg.provinces).length,
+        },
+      ].reduce<
+        Record<string, { total: number; stored: number; unparsable: string[] }>
+      >((info, { name, json, unparsable, stored }) => {
+        info[name] = {
+          stored,
+          total: json.length,
+          unparsable: unparsable,
+        };
+
+        return info;
+      }, {}),
+    };
   }
 }

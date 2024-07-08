@@ -2,30 +2,33 @@ import { z } from "zod";
 
 export const parseFMGRecords = <TSchema>({
   data,
-  model,
   zSchema,
-  debug = false,
-  strictMode = false,
   zParsableSchema = zSchema,
 }: {
   data: object[];
-  debug?: boolean;
-  strictMode?: boolean;
   zSchema: z.ZodType<TSchema>;
   zParsableSchema?: z.ZodTypeAny;
-  model: "CULTURE" | "STATE" | "RELIGION" | "PROVINCE" | "BURG";
-}) => {
-  return data.reduce<TSchema[]>((records, obj) => {
-    const { data: parsableData, error } = zParsableSchema.safeParse(obj);
+}) =>
+  data.reduce<{
+    records: TSchema[];
+    unparsable: string[];
+  }>(
+    (info, obj) => {
+      const { records, unparsable } = info;
 
-    if (!error) {
-      const { data, success } = zSchema.safeParse(parsableData);
-      if (success) records.push(data);
-    } else {
-      if (strictMode) throw error;
-      if (debug) console.log(`failed to parse '${model}'`, obj);
-    }
+      const { data: parsableData, error } = zParsableSchema.safeParse(obj);
 
-    return records;
-  }, []);
-};
+      if (!error) {
+        const { data, success } = zSchema.safeParse(parsableData);
+        if (success) records.push(data);
+      } else {
+        unparsable.push(JSON.stringify(obj));
+      }
+
+      return info;
+    },
+    {
+      records: [],
+      unparsable: [],
+    },
+  );
