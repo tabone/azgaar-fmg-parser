@@ -7,6 +7,7 @@ import {
   TState,
   zBurg,
   zCulture,
+  zParsableProvince,
   zProvince,
   zReligion,
   zState,
@@ -111,6 +112,7 @@ export class FMG {
         strictMode,
         model: "PROVINCE",
         zSchema: zProvince,
+        zParsableSchema: zParsableProvince,
         data: JSON.parse(payload[165]).slice(1),
       }),
     });
