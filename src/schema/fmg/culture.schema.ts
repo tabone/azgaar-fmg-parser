@@ -26,5 +26,6 @@ export type TCulture = z.infer<typeof zCulture>;
 export type TDefinedCulture = z.infer<typeof zDefinedCulture>;
 export type TDefaultCulture = z.infer<typeof zDefaultCulture>;
 
-export const isDefaultCulture = (culture: TCulture): culture is TCulture =>
-  culture.i === 0;
+export const isDefaultCulture = (
+  culture: TCulture,
+): culture is TDefaultCulture => culture.i === 0;
