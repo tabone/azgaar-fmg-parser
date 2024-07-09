@@ -11,7 +11,7 @@ export const zProvince = z.object({
   center: z.number(),
   formName: z.string(),
   fullName: z.string(),
-  pole: z.tuple([z.number(), z.number()]),
+  pole: z.tuple([z.number(), z.number()]).optional(),
 });
 
 export const zParsableProvince = z.union([
