@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { zCOA } from "../coa.schema";
-import { zFMGBoolean } from "../fmg-boolean.schema";
 
 export const zBurg = z.object({
   coa: zCOA,
@@ -10,16 +9,16 @@ export const zBurg = z.object({
   cell: z.number(),
   name: z.string(),
   type: z.string(),
+  port: z.number(),
   state: z.number(),
-  port: zFMGBoolean,
-  plaza: zFMGBoolean,
-  walls: zFMGBoolean,
-  shanty: zFMGBoolean,
-  temple: zFMGBoolean,
+  plaza: z.number(),
+  walls: z.number(),
+  shanty: z.number(),
+  temple: z.number(),
   culture: z.number(),
   feature: z.number(),
-  capital: zFMGBoolean,
-  citadel: zFMGBoolean,
+  capital: z.number(),
+  citadel: z.number(),
   population: z.number(),
 });
 
